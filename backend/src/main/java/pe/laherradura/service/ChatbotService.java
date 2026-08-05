@@ -175,13 +175,13 @@ public class ChatbotService {
         OrderCreateRequest req=new OrderCreateRequest(
             c.customerName==null?s.getCustomer().getName():c.customerName,s.getPhone(),
             c.fulfillmentType==null?FulfillmentType.PICKUP:c.fulfillmentType,c.zoneId,c.address,c.reference,
-            c.paymentMethod==null?PaymentMethod.CASH:c.paymentMethod,OrderSource.WHATSAPP,"Pedido generado por Héctor",items);
+            c.paymentMethod==null?PaymentMethod.CASH:c.paymentMethod,OrderSource.WHATSAPP,"Pedido generado por Mashico",items);
         CustomerOrder order=orders.create(req);String code=order.getCode();reset(s,c);
         String delivery=order.getFulfillmentType()==FulfillmentType.DELIVERY?"Delivery a: "+order.getDeliveryAddress():"Recojo en tienda";
         return response(s,"✅ *PEDIDO CONFIRMADO*\n\nCódigo: *"+code+"*\nTotal: *S/ "+money(order.getTotal())+"*\nModalidad: "+delivery+"\n\nTe avisaremos cuando esté listo. ¡Gracias por comprar en Carnicería La Herradura!",code,false);
     }
 
-    private String menu(String name){return "🥩 ¡Hola"+(name==null||name.isBlank()?"":" "+name)+"! Soy *Héctor*, asistente de *Carnicería La Herradura*.\n\n¿Qué deseas hacer?\n1️⃣ Ver cortes y precios\n2️⃣ Armar un pedido\n3️⃣ Combos y promociones\n4️⃣ Consultar delivery\n5️⃣ Hablar con una persona";}
+    private String menu(String name){return "🥩 ¡Hola"+(name==null||name.isBlank()?"":" "+name)+"! Soy *Mashico*, asistente de *Carnicería La Herradura*.\n\n¿Qué deseas hacer?\n1️⃣ Ver cortes y precios\n2️⃣ Armar un pedido\n3️⃣ Combos y promociones\n4️⃣ Consultar delivery\n5️⃣ Hablar con una persona";}
     private String categoriesMessage(){List<Category> list=categories.findByActiveTrueOrderByNameAsc();if(list.isEmpty())return "El catálogo todavía está siendo configurado.";StringBuilder b=new StringBuilder("Elige una categoría:\n\n");for(int i=0;i<list.size();i++)b.append(i+1).append("️⃣ ").append(list.get(i).getName()).append("\n");return b.toString();}
     private String productsMessage(Category category,List<Product> list){StringBuilder b=new StringBuilder(category==null?"Productos disponibles:\n\n":"*"+category.getName()+"*\n\n");for(int i=0;i<list.size();i++){Product p=list.get(i);b.append(i+1).append(". ").append(p.getName()).append(" — S/ ").append(money(p.getPricePerUnit())).append(p.getUnit()==ProductUnit.KG?"/kg":"").append("\n");}b.append("\nResponde con el número del producto.");return b.toString();}
     private String promotionsMessage(){List<Promotion> list=promotions.findByActiveTrueOrderByStartDateDesc();if(list.isEmpty())return "🔥 Próximamente publicaremos combos y promociones. Escribe *2* para armar un pedido con los cortes disponibles.";StringBuilder b=new StringBuilder("🔥 *PROMOCIONES*\n\n");for(Promotion p:list)b.append("• *").append(p.getName()).append("*").append(p.getPromotionalPrice()==null?"":" — S/ "+money(p.getPromotionalPrice())).append("\n").append(p.getDescription()==null?"":p.getDescription()).append("\n\n");return b.toString();}
