@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:laherradura;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password:
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+app:
+  jwt:
+    secret: TEST_SECRET_WITH_MORE_THAN_32_CHARACTERS_1234567890
+  cors:
+    allowed-origin-patterns: http://localhost:5173

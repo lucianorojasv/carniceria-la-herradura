@@ -1,0 +1,78 @@
+spring:
+  application:
+    name: carniceria-la-herradura
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/carniceria}
+    username: ${DB_USER:carniceria}
+    password: ${DB_PASSWORD:carniceria123}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:3}
+      minimum-idle: ${DB_POOL_MIN_IDLE:0}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT_MS:10000}
+      idle-timeout: ${DB_IDLE_TIMEOUT_MS:30000}
+      max-lifetime: ${DB_MAX_LIFETIME_MS:300000}
+      validation-timeout: ${DB_VALIDATION_TIMEOUT_MS:5000}
+  flyway:
+    enabled: ${FLYWAY_ENABLED:true}
+    url: ${FLYWAY_URL:${DB_URL:jdbc:postgresql://localhost:5432/carniceria}}
+    user: ${FLYWAY_USER:${DB_USER:carniceria}}
+    password: ${FLYWAY_PASSWORD:${DB_PASSWORD:carniceria123}}
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    connect-retries: 5
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+  jackson:
+    time-zone: America/Lima
+  servlet:
+    multipart:
+      max-file-size: 4MB
+      max-request-size: 4MB
+  lifecycle:
+    timeout-per-shutdown-phase: 25s
+
+server:
+  port: ${PORT:${SERVER_PORT:8080}}
+  forward-headers-strategy: framework
+  shutdown: graceful
+  compression:
+    enabled: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:LOCAL_DEVELOPMENT_SECRET_CAMBIAR_ANTES_DE_PRODUCCION_2026_1234567890}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:480}
+  cors:
+    allowed-origin-patterns: ${CORS_ALLOWED_ORIGIN_PATTERNS:http://localhost:5173,http://localhost:3000,https://*.vercel.app}
+  whatsapp:
+    enabled: ${WHATSAPP_ENABLED:false}
+    graph-api-version: ${WHATSAPP_GRAPH_API_VERSION:v23.0}
+    phone-number-id: ${WHATSAPP_PHONE_NUMBER_ID:}
+    access-token: ${WHATSAPP_ACCESS_TOKEN:}
+    app-secret: ${WHATSAPP_APP_SECRET:}
+    verify-token: ${WHATSAPP_VERIFY_TOKEN:la-herradura-webhook}
+  openai:
+    enabled: ${OPENAI_ENABLED:false}
+    api-key: ${OPENAI_API_KEY:}
+    model: ${OPENAI_MODEL:gpt-5-mini}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    pe.laherradura: INFO
+    org.hibernate.SQL: WARN
