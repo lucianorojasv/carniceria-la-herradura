@@ -35,14 +35,19 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
+    /**
+     * El nombre del bean debe ser corsConfigurationSource para que Spring Security
+     * lo detecte automáticamente. Además, se inyecta explícitamente en el filtro.
+     */
     @Bean
-    CorsConfigurationSource cors(
+    UrlBasedCorsConfigurationSource corsConfigurationSource(
             @Value("${app.cors.allowed-origin-patterns}") String originPatterns) {
         CorsConfiguration configuration = new CorsConfiguration();
         List<String> patterns = Arrays.stream(originPatterns.split(","))
                 .map(String::trim)
                 .filter(value -> !value.isBlank())
                 .toList();
+
         configuration.setAllowedOriginPatterns(patterns);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Hub-Signature-256"));
@@ -56,10 +61,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwt) throws Exception {
+    SecurityFilterChain filterChain(
+            HttpSecurity http,
+            JwtAuthenticationFilter jwt,
+            CorsConfigurationSource corsConfigurationSource) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers
                         .contentTypeOptions(contentType -> {})
