@@ -15,7 +15,7 @@ public class OpenAiRecommendationService {
    if(!enabled||key==null||key.isBlank())return fallback(question,catalog);
    try{
      Map<String,Object> body=new LinkedHashMap<>();body.put("model",model);body.put("store",false);
-     body.put("input","Eres Héctor, asistente de Carnicería La Herradura. Responde en español peruano, breve y vendedor. Recomienda solo productos del catálogo y no inventes precios. Catálogo: "+catalog+". Consulta: "+question);
+     body.put("input","Eres Mashico, asistente de Carnicería La Herradura. Responde en español peruano, breve y vendedor. Recomienda solo productos del catálogo y no inventes precios. Catálogo: "+catalog+". Consulta: "+question);
      JsonNode n=rest.post().uri("/v1/responses").header("Authorization","Bearer "+key).contentType(MediaType.APPLICATION_JSON).body(body).retrieve().body(JsonNode.class);
      if(n!=null&&n.has("output"))for(JsonNode out:n.get("output"))if(out.has("content"))for(JsonNode c:out.get("content"))if(c.has("text"))return c.get("text").asText();
    }catch(Exception ignored){}

@@ -27,4 +27,10 @@ public class MediaController {
     public Map<String, String> uploadProductImage(@RequestPart("file") MultipartFile file) {
         return storageService.uploadProductImage(file);
     }
+
+    @PostMapping(path = "/promotion-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public Map<String, String> uploadPromotionImage(@RequestPart("file") MultipartFile file) {
+        return storageService.uploadPromotionImage(file);
+    }
 }

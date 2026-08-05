@@ -43,12 +43,20 @@ public class MediaStorageService {
     }
 
     public Map<String, String> uploadProductImage(MultipartFile file) {
+        return uploadImage(file, "products");
+    }
+
+    public Map<String, String> uploadPromotionImage(MultipartFile file) {
+        return uploadImage(file, "promotions");
+    }
+
+    private Map<String, String> uploadImage(MultipartFile file, String folder) {
         validateConfiguration();
         validateImage(file);
 
         String contentType = file.getContentType().toLowerCase(Locale.ROOT);
         String extension = extensionFor(contentType);
-        String objectPath = "products/" + UUID.randomUUID() + extension;
+        String objectPath = folder + "/" + UUID.randomUUID() + extension;
 
         try {
             restClient.post()

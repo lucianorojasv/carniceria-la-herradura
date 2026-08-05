@@ -1,0 +1,12 @@
+ARCHIVOS_DEL_PARCHE.txt
+LEEME_PARCHE_V7.md
+backend/src/main/java/pe/laherradura/controller/MediaController.java
+backend/src/main/java/pe/laherradura/service/ChatbotService.java
+backend/src/main/java/pe/laherradura/service/MediaStorageService.java
+backend/src/main/java/pe/laherradura/service/OpenAiRecommendationService.java
+frontend/src/pages/Assistant.jsx
+frontend/src/pages/Promotions.jsx
+frontend/src/pages/PublicCatalog.jsx
+frontend/src/services/api.js
+frontend/src/styles.css
+supabase/05_ensure_promotion_images.sql
