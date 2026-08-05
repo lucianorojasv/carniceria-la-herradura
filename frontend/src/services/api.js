@@ -21,7 +21,12 @@ async function getApiBase() {
 export async function api(path, options = {}) {
   const base = await getApiBase();
   const token = localStorage.getItem('token');
-  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  const isFormData = options.body instanceof FormData;
+  const headers = { ...(options.headers || {}) };
+
+  if (!isFormData && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const response = await fetch(base + path, { ...options, headers });
