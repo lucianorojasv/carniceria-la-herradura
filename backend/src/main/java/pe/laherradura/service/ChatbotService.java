@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.laherradura.dto.ChatMessageResponse;
 import pe.laherradura.dto.OrderCreateRequest;
+import pe.laherradura.dto.StoreLocationResponse;
 import pe.laherradura.entity.BusinessSetting;
 import pe.laherradura.entity.Category;
 import pe.laherradura.entity.ChatSession;
@@ -54,6 +55,7 @@ public class ChatbotService {
     private final OpenAiRecommendationService ai;
     private final SettingsService settingsService;
     private final BusinessHoursService hoursService;
+    private final StoreLocationService storeLocationService;
     private final ObjectMapper mapper;
 
     public ChatbotService(ChatSessionRepository sessions,
@@ -66,6 +68,7 @@ public class ChatbotService {
                           OpenAiRecommendationService ai,
                           SettingsService settingsService,
                           BusinessHoursService hoursService,
+                          StoreLocationService storeLocationService,
                           ObjectMapper mapper) {
         this.sessions = sessions;
         this.customers = customers;
@@ -77,6 +80,7 @@ public class ChatbotService {
         this.ai = ai;
         this.settingsService = settingsService;
         this.hoursService = hoursService;
+        this.storeLocationService = storeLocationService;
         this.mapper = mapper;
     }
 
@@ -107,6 +111,9 @@ public class ChatbotService {
         if (Set.of("cancelar", "cancel").contains(normalized)) {
             reset(session, context);
             return response(session, "Pedido cancelado. No se registró ningún cobro.\n\n" + menu(customer.getName()), null, false);
+        }
+        if (session.getState() == ChatState.MAIN_MENU && locationIntent(normalized)) {
+            return locationResponse(session);
         }
 
         try {
@@ -186,6 +193,10 @@ public class ChatbotService {
 
         if (normalized.equals("4") || normalized.contains("delivery") || normalized.contains("envio") || normalized.contains("envío")) {
             return response(session, zonesMessage(false), null, false);
+        }
+
+        if (normalized.equals("7") || locationIntent(normalized)) {
+            return locationResponse(session);
         }
 
         if (normalized.equals("5") || normalized.contains("asesor") || normalized.contains("persona") || normalized.contains("humano")) {
@@ -520,8 +531,9 @@ public class ChatbotService {
                 + "3️⃣ Combos y promociones\n"
                 + "4️⃣ Consultar delivery\n"
                 + "5️⃣ Hablar con una persona\n"
-                + "6️⃣ Reservar para el próximo día de atención\n\n"
-                + "También puedes escribir *horario* o el nombre de un corte, por ejemplo *bistec*.";
+                + "6️⃣ Reservar para el próximo día de atención\n"
+                + "7️⃣ Ver ubicación y cómo llegar\n\n"
+                + "También puedes escribir *horario*, *ubicación* o el nombre de un corte, por ejemplo *bistec*.";
     }
 
     private String categoriesMessage() {
@@ -703,6 +715,44 @@ public class ChatbotService {
                 + (settings.isAllowNextDayReservations()
                 ? "\n\nEscribe *reservar* para programar un pedido para " + hoursService.humanDate(status.nextBusinessDate()) + "."
                 : "");
+    }
+
+    private ChatMessageResponse locationResponse(ChatSession session) {
+        StoreLocationResponse location = storeLocationService.mainPublic();
+        if (location == null) {
+            BusinessSetting settings = settingsService.get();
+            return response(session,
+                    "📍 Nuestra ubicación todavía está siendo configurada.\nDirección: " + safe(settings.getAddress())
+                            + "\n\nEscribe *5* para hablar con una persona.",
+                    null, false);
+        }
+        StringBuilder message = new StringBuilder("📍 *").append(location.name()).append("*\n")
+                .append(location.address());
+        if (location.district() != null && !location.district().isBlank()) message.append(", ").append(location.district());
+        if (location.referenceText() != null && !location.referenceText().isBlank()) {
+            message.append("\nReferencia: ").append(location.referenceText());
+        }
+        message.append("\nHorario: ").append(location.todaySchedule())
+                .append("\n\n🗺️ Cómo llegar:\n").append(location.directionsUrl());
+        String media = location.images().stream()
+                .filter(image -> Set.of("COVER", "FACADE", "REFERENCE").contains(image.imageType()))
+                .map(StoreLocationResponse.Image::imageUrl)
+                .findFirst()
+                .orElseGet(() -> location.images().stream().map(StoreLocationResponse.Image::imageUrl).findFirst().orElse(null));
+        return response(session, message.toString(), null, false, media, "image");
+    }
+
+    private boolean locationIntent(String normalized) {
+        if (normalized == null || normalized.isBlank()) return false;
+        return normalized.equals("7")
+                || normalized.equals("ubicacion")
+                || normalized.equals("direccion")
+                || normalized.equals("como llegar")
+                || normalized.equals("donde estan")
+                || normalized.equals("donde queda")
+                || normalized.contains("ubicacion del local")
+                || normalized.contains("direccion del local")
+                || normalized.contains("como llego");
     }
 
     private Product findMentionedProduct(String normalizedMessage) {

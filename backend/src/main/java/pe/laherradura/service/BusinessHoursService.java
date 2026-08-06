@@ -62,6 +62,40 @@ public class BusinessHoursService {
         return date.atTime(time).atZone(zone(settings)).toOffsetDateTime();
     }
 
+    public void validateScheduledFor(BusinessSetting settings, OffsetDateTime scheduledFor) {
+        if (scheduledFor == null) return;
+        ZoneId businessZone = zone(settings);
+        ZonedDateTime scheduled = scheduledFor.atZoneSameInstant(businessZone);
+        ZonedDateTime now = ZonedDateTime.now(businessZone);
+        if (!scheduled.isAfter(now.plusMinutes(15))) {
+            throw new pe.laherradura.exception.BusinessException(
+                    "El horario programado debe ser posterior a la hora actual");
+        }
+        if (!businessDays(settings).contains(scheduled.getDayOfWeek())) {
+            throw new pe.laherradura.exception.BusinessException(
+                    "La fecha elegida no corresponde a un día de atención");
+        }
+        LocalTime opening = valueOr(settings.getOpeningTime(), LocalTime.of(8, 0));
+        LocalTime closing = valueOr(settings.getClosingTime(), LocalTime.of(20, 0));
+        LocalTime selected = scheduled.toLocalTime();
+        if (selected.isBefore(opening) || !selected.isBefore(closing)) {
+            throw new pe.laherradura.exception.BusinessException(
+                    "Selecciona un horario dentro de la atención del negocio");
+        }
+        List<LocalTime> allowedStarts = reservationSlots(settings).stream()
+                .map(slot -> slot.split("-")[0].trim())
+                .map(LocalTime::parse)
+                .toList();
+        if (!allowedStarts.isEmpty() && !allowedStarts.contains(selected.withSecond(0).withNano(0))) {
+            throw new pe.laherradura.exception.BusinessException(
+                    "Selecciona una de las franjas horarias disponibles");
+        }
+    }
+
+    public boolean isBusinessDay(BusinessSetting settings, LocalDate date) {
+        return businessDays(settings).contains(date.getDayOfWeek());
+    }
+
     public String humanDate(LocalDate date) {
         String text = DATE_FORMAT.format(date);
         return text.substring(0, 1).toUpperCase(Locale.ROOT) + text.substring(1);

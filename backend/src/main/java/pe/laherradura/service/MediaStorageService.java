@@ -54,6 +54,11 @@ public class MediaStorageService {
         return uploadImage(file, "payment-qr");
     }
 
+    public Map<String, String> uploadStoreImage(MultipartFile file, Long locationId) {
+        String locationFolder = locationId == null ? "unassigned" : String.valueOf(locationId);
+        return uploadImage(file, "business-gallery/" + locationFolder);
+    }
+
     private Map<String, String> uploadImage(MultipartFile file, String folder) {
         validateConfiguration();
         validateImage(file);

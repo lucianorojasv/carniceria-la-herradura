@@ -1,0 +1,13 @@
+PARCHE CORS RENDER + VERCEL - CARNICERIA LA HERRADURA
+
+1. Copia la carpeta backend de este parche sobre la carpeta backend de tu proyecto.
+2. Confirma que se reemplazó:
+   backend/src/main/java/pe/laherradura/config/SecurityConfig.java
+3. En Render, deja esta variable:
+   CORS_ALLOWED_ORIGIN_PATTERNS=https://carniceria-la-herradura.vercel.app
+4. Sube el cambio a GitHub:
+   git add backend/src/main/java/pe/laherradura/config/SecurityConfig.java
+   git commit -m "Corregir CORS entre Vercel y Render"
+   git push origin main
+5. Render desplegará automáticamente el backend.
+6. Cuando Render indique Live, prueba el catálogo y el login con Ctrl+F5.

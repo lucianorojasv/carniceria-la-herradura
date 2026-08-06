@@ -21,6 +21,7 @@ import pe.laherradura.repository.ProductRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
@@ -32,13 +33,19 @@ public class OrderService {
     private final ProductRepository products;
     private final CustomerService customers;
     private final DeliveryZoneRepository zones;
+    private final SettingsService settingsService;
+    private final BusinessHoursService businessHoursService;
 
     public OrderService(CustomerOrderRepository orders, ProductRepository products,
-                        CustomerService customers, DeliveryZoneRepository zones) {
+                        CustomerService customers, DeliveryZoneRepository zones,
+                        SettingsService settingsService,
+                        BusinessHoursService businessHoursService) {
         this.orders = orders;
         this.products = products;
         this.customers = customers;
         this.zones = zones;
+        this.settingsService = settingsService;
+        this.businessHoursService = businessHoursService;
     }
 
     @Transactional(readOnly = true)
@@ -49,6 +56,64 @@ public class OrderService {
     @Transactional(readOnly = true)
     public CustomerOrder get(Long id) {
         return orders.findById(id).orElseThrow(() -> new NotFoundException("Pedido no encontrado"));
+    }
+
+    @Transactional(readOnly = true)
+    public CustomerOrder getPublic(String code, String rawPhone) {
+        String phone = customers.clean(rawPhone);
+        return orders.findByCodeIgnoreCaseAndCustomer_Phone(code.trim(), phone)
+                .orElseThrow(() -> new NotFoundException("Pedido no encontrado"));
+    }
+
+    public CustomerOrder createPublic(OrderCreateRequest request) {
+        var settings = settingsService.get();
+        var status = businessHoursService.status(settings);
+        OffsetDateTime scheduledFor = request.scheduledFor();
+
+        if (scheduledFor == null && !status.acceptsSameDay()) {
+            throw new BusinessException("Estamos fuera del horario para pedidos de hoy. Programa tu pedido para el próximo día de atención.");
+        }
+        if (scheduledFor != null) {
+            if (!settings.isAllowNextDayReservations()) {
+                throw new BusinessException("Las reservas programadas están desactivadas");
+            }
+            businessHoursService.validateScheduledFor(settings, scheduledFor);
+        }
+        FulfillmentType fulfillment = request.fulfillmentType() == null
+                ? FulfillmentType.PICKUP : request.fulfillmentType();
+        if (fulfillment == FulfillmentType.DELIVERY) {
+            if (!settings.isDeliveryEnabled()) {
+                throw new BusinessException("El delivery está temporalmente desactivado");
+            }
+            if (request.deliveryAddress() == null || request.deliveryAddress().isBlank()) {
+                throw new BusinessException("Escribe la dirección de entrega");
+            }
+        }
+        PaymentMethod payment = request.paymentMethod() == null ? PaymentMethod.CASH : request.paymentMethod();
+        if (payment == PaymentMethod.YAPE && !settings.isYapeEnabled()) {
+            throw new BusinessException("Yape no está disponible como forma de pago");
+        }
+        if (payment == PaymentMethod.PLIN && !settings.isPlinEnabled()) {
+            throw new BusinessException("Plin no está disponible como forma de pago");
+        }
+        if (payment == PaymentMethod.TRANSFER && !settings.isTransferEnabled()) {
+            throw new BusinessException("La transferencia bancaria no está disponible");
+        }
+
+        OrderCreateRequest publicRequest = new OrderCreateRequest(
+                request.customerName(),
+                request.customerPhone(),
+                request.fulfillmentType(),
+                request.deliveryZoneId(),
+                request.deliveryAddress(),
+                request.deliveryReference(),
+                request.paymentMethod(),
+                OrderSource.WEB,
+                request.notes(),
+                scheduledFor,
+                request.items()
+        );
+        return create(publicRequest);
     }
 
     public CustomerOrder create(OrderCreateRequest request) {

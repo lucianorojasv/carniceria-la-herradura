@@ -1,0 +1,48 @@
+warning: in the working copy of 'LEEME_PARCHE_IMAGENES.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/controller/PublicController.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/repository/CustomerOrderRepository.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/service/BusinessHoursService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/service/ChatbotService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/service/MediaStorageService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/service/OrderService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/App.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/components/Layout.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/pages/PublicCatalog.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/styles.css', LF will be replaced by CRLF the next time Git touches it
+ .../laherradura/controller/PublicController.java   |  97 [32m++++[m[31m-[m
+ .../repository/CustomerOrderRepository.java        |   7 [32m+[m[31m-[m
+ .../laherradura/service/BusinessHoursService.java  |  34 [32m++[m
+ .../pe/laherradura/service/ChatbotService.java     |  54 [32m++[m[31m-[m
+ .../laherradura/service/MediaStorageService.java   |   5 [32m+[m
+ .../java/pe/laherradura/service/OrderService.java  |  67 [32m+++[m[31m-[m
+ frontend/index.html                                |  20 [32m+[m[31m-[m
+ frontend/src/App.jsx                               |  48 [32m++[m[31m-[m
+ frontend/src/components/Layout.jsx                 |  33 [32m+[m[31m-[m
+ frontend/src/pages/PublicCatalog.jsx               | 430 [32m+++++++++++++++++[m[31m----[m
+ frontend/src/styles.css                            |  34 [32m++[m
+ 11 files changed, 726 insertions(+), 103 deletions(-)
+warning: in the working copy of 'LEEME_PARCHE_IMAGENES.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/controller/PublicController.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/repository/CustomerOrderRepository.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/service/BusinessHoursService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/service/ChatbotService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/service/MediaStorageService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'backend/src/main/java/pe/laherradura/service/OrderService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/App.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/components/Layout.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/pages/PublicCatalog.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/styles.css', LF will be replaced by CRLF the next time Git touches it
+ .../laherradura/controller/PublicController.java   |  97 [32m++++[m[31m-[m
+ .../repository/CustomerOrderRepository.java        |   7 [32m+[m[31m-[m
+ .../laherradura/service/BusinessHoursService.java  |  34 [32m++[m
+ .../pe/laherradura/service/ChatbotService.java     |  54 [32m++[m[31m-[m
+ .../laherradura/service/MediaStorageService.java   |   5 [32m+[m
+ .../java/pe/laherradura/service/OrderService.java  |  67 [32m+++[m[31m-[m
+ frontend/index.html                                |  20 [32m+[m[31m-[m
+ frontend/src/App.jsx                               |  48 [32m++[m[31m-[m
+ frontend/src/components/Layout.jsx                 |  33 [32m+[m[31m-[m
+ frontend/src/pages/PublicCatalog.jsx               | 430 [32m+++++++++++++++++[m[31m----[m
+ frontend/src/styles.css                            |  34 [32m++[m
+ 11 files changed, 726 insertions(+), 103 deletions(-)
