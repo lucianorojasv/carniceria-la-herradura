@@ -1,0 +1,49 @@
+PRUEBAS DEL PARCHE V8
+=====================
+
+1. MENÚ
+   menu
+
+2. HORARIO
+   horario
+
+3. PRODUCTO CON IMAGEN
+   bistec
+
+4. PROMOCIÓN CON IMAGEN
+   menu
+   3
+
+5. PEDIDO PARA HOY
+   menu
+   2
+   [elige categoría]
+   [elige producto]
+   1
+   2
+   1
+   1
+   CONFIRMAR
+
+6. RESERVA
+   menu
+   6
+   [elige categoría]
+   [elige producto]
+   1
+   2
+   1 o 2
+   [si es delivery: zona, dirección, referencia]
+   [elige franja]
+   [elige pago]
+   CONFIRMAR
+
+7. FUERA DE HORARIO
+   Cambia temporalmente la hora límite a una hora anterior a la actual.
+   Envía: menu
+   El mensaje debe indicar que solo se aceptan reservas para el próximo día de atención.
+
+8. VERIFICACIÓN EN SUPABASE
+   SELECT code, scheduled_for, payment_method, source, total
+   FROM customer_orders
+   ORDER BY created_at DESC;

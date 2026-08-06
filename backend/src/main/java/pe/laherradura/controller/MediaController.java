@@ -33,4 +33,10 @@ public class MediaController {
     public Map<String, String> uploadPromotionImage(@RequestPart("file") MultipartFile file) {
         return storageService.uploadPromotionImage(file);
     }
+
+    @PostMapping(path = "/payment-qr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public Map<String, String> uploadPaymentQr(@RequestPart("file") MultipartFile file) {
+        return storageService.uploadPaymentQr(file);
+    }
 }

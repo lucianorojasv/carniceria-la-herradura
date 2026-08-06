@@ -50,6 +50,10 @@ public class MediaStorageService {
         return uploadImage(file, "promotions");
     }
 
+    public Map<String, String> uploadPaymentQr(MultipartFile file) {
+        return uploadImage(file, "payment-qr");
+    }
+
     private Map<String, String> uploadImage(MultipartFile file, String folder) {
         validateConfiguration();
         validateImage(file);
